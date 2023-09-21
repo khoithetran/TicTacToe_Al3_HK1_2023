@@ -13,7 +13,7 @@ public class TicTacToeCellManager : MonoBehaviour
     private int cellNumber;
     private bool cellEmpty;
     public Action<Point, String> boardUpdate = null;
-    // Start is called before the first frame update
+
     void Start()
     {
         cellNumber = int.Parse(transform.name[6].ToString());
@@ -33,7 +33,8 @@ public class TicTacToeCellManager : MonoBehaviour
         }
     }
 
-    public void UpdateCellStatus() // Updates the data for the cell
+    // Cập nhật trạng thái ô
+    public void UpdateCellStatus()
     {
         Point clickedCell;
         string player;
@@ -49,8 +50,10 @@ public class TicTacToeCellManager : MonoBehaviour
                 CellImage.sprite = Resources.Load<Sprite>("Sprites/O");
                 player = "O";
             }
-            clickedCell = new Point(cellNumber % 3, Convert.ToInt32(Math.Floor(cellNumber / 3.0)) % 3); // Calculates where the cell should be in the array
-            boardUpdate?.Invoke(clickedCell, player); // Gets used to update game turn order and make sure the game has started
+            // Chuyển tọa độ ô được click sang tọa độ của mảng 2 chiều và lưu vào biến clickedCell
+            clickedCell = new Point(cellNumber % 3, Convert.ToInt32(Math.Floor(cellNumber / 3.0)) % 3);
+            // Dùng để chuyển lượt chơi (truyền vào tọa độ ô được click và người click)
+            boardUpdate?.Invoke(clickedCell, player);
             CellImage.enabled = true;
         }
         cellEmpty = false;

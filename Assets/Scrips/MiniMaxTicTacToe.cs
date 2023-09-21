@@ -9,7 +9,7 @@ public class MiniMaxTicTacToe : MonoBehaviour
 {
     private GameStatus gameStatus;
     private Button button;
-    // Start is called before the first frame update
+
     void Start()
     {
         gameStatus = GameObject.Find("Tic Tac Toe").GetComponent<GameStatus>();
@@ -27,7 +27,8 @@ public class MiniMaxTicTacToe : MonoBehaviour
         enabled = true;
     }
 
-    private void BestMove(string[,] board) // checks every possible next move
+    // Kiểm tra tất cả các ô có thế đi ở bước tiếp theo
+    private void BestMove(string[,] board) 
     {
         int bestScore = int.MinValue;
         Point bestMove;
@@ -40,7 +41,8 @@ public class MiniMaxTicTacToe : MonoBehaviour
                     board[x, y] = "O";
                     int score = MiniMax(board, 0, false);
                     board[x, y] = "";
-                    if (score > bestScore) // Keeps the best trees first move as the next move untill every possible state has been evaluated
+                    // Nếu có 2 ô có điểm cao nhất bằng nhau thì lấy ô được duyệt trước làm bước đi tiếp theo
+                    if (score > bestScore)
                     {
                         bestScore = score;
                         bestMove = new Point(x, y);
@@ -51,7 +53,7 @@ public class MiniMaxTicTacToe : MonoBehaviour
         UpdateBestMoveCell(bestMove);
     }
 
-    // recusivley check every possilbe next move and moves after that untill game end
+    // Tính điểm cho bước đi ở ô được gọi
     private int MiniMax(string[,] boardStatus, int depth, bool isMaximizing) 
     {
         string result = gameStatus.CheckForWinner(boardStatus);
@@ -64,7 +66,8 @@ public class MiniMaxTicTacToe : MonoBehaviour
             else if (result == "tie")
                 return 0;
         }
-        if (isMaximizing) // gets next best move
+        // Nước đi có thể chiến thắng
+        if (isMaximizing)
         {
             int bestScore = int.MinValue;
             for (int x = 0; x < 3; x++)
@@ -82,7 +85,8 @@ public class MiniMaxTicTacToe : MonoBehaviour
             }
             return bestScore;
         }
-        else // gets next worst move
+        // Đánh giá bước đi tệ nhất cho bản thân (nước đi có thể khiến cho đối thủ chiến thắng)
+        else
         {
             int bestScore = int.MaxValue;
             for (int x = 0; x < 3; x++)
@@ -101,7 +105,9 @@ public class MiniMaxTicTacToe : MonoBehaviour
             return bestScore;
         }
     }
-    private void UpdateBestMoveCell(Point bestMove) // Changes 2d array format to list of 9 game cells
+
+    // Đánh dấu hình O vào ô bestMove và câp nhật lại trạng thái ô sau khi đi
+    private void UpdateBestMoveCell(Point bestMove)
     {
         int cellNumber = bestMove.X + bestMove.Y * 3;
         TicTacToeCellManager ticTacToeCellManager = transform.GetChild(cellNumber).GetComponent<TicTacToeCellManager>();

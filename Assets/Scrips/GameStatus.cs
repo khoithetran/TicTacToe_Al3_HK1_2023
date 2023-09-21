@@ -20,7 +20,6 @@ public class GameStatus : MonoBehaviour
 
     private Text gameEndingText;
 
-    // Start is called before the first frame update
     void Start()
     {
         turnOrder = GameObject.Find("Tic Tac Toe/Change Turn Order Button").GetComponent<TurnOrderManager>();
@@ -37,14 +36,16 @@ public class GameStatus : MonoBehaviour
         }
     }
 
-
+    // Cập nhật thông tin trạng thái trò chơi, thêm ô được click vào danh sách các ô đã đi
     public void AddGridCell(Transform transform)
     {
-        UsedCells.Add(transform); // Gets used to reset the grids that where updated.
+        // Được sử dụng để reset lại lưới mới khi có thêm ô được click
+        UsedCells.Add(transform);
         transform.GetComponent<TicTacToeCellManager>().boardUpdate += UpdateGameStatus;
     }
 
-    public void UpdateGameStatus(Point clickedCell, string player) // Gets called when a cell is clicked to update turn order and make sure the game is started.
+    // Được gọi khi một ô được click để đổi lượt đi tiếp theo và bắt đầu game
+    public void UpdateGameStatus(Point clickedCell, string player) 
     {
         GameStarted = true;
         UpdateBoardStatus(clickedCell, player);
@@ -60,31 +61,37 @@ public class GameStatus : MonoBehaviour
         }
     }
 
+    // Cập nhật trạng thái bảng khi người chơi click vào một ô trống
     private void UpdateBoardStatus(Point clickedCell, string player)
     {
         BoardStatus[clickedCell.X, clickedCell.Y] = player;
     }
 
-    public string CheckForWinner(string[,] boardStatus) // Checks Tic Tac Toe rules if there is a winner and resturns corresponding value for game result
+    // Kiểm tra luật chơi nếu có người chiến thắng thì trả về chuỗi kết quả
+    public string CheckForWinner(string[,] boardStatus)
     {
         string winner = null;
         for (int i = 0; i < 3; i++)
         {
-            if (ThreeEqualSymbols(boardStatus[i, 0], boardStatus[i, 1], boardStatus[i, 2])) // Check if any rows are equal 
+            // Kiểm tra hàng ngang
+            if (ThreeEqualSymbols(boardStatus[i, 0], boardStatus[i, 1], boardStatus[i, 2]))
             {
                 winner = boardStatus[i, 0];
             }
-            if (ThreeEqualSymbols(boardStatus[0, i], boardStatus[1, i], boardStatus[2, i])) // Check if any colums are equal
+            // Kiểm tra đường thẳng
+            if (ThreeEqualSymbols(boardStatus[0, i], boardStatus[1, i], boardStatus[2, i]))
             {
                 winner = boardStatus[0, i];
             }
         }
-        if (ThreeEqualSymbols(boardStatus[0, 0], boardStatus[1, 1], boardStatus[2, 2]) // Check both diagnals if equal
+        // Kiểm tra nếu hình thành được 1 đường chéo có cùng ký tự
+        if (ThreeEqualSymbols(boardStatus[0, 0], boardStatus[1, 1], boardStatus[2, 2])
                 || ThreeEqualSymbols(boardStatus[0, 2], boardStatus[1, 1], boardStatus[2, 0]))
         {
             winner = boardStatus[1, 1];
         }
-        if (!boardStatus.OfType<string>().Any(x => x == "") && winner == null) // Checks if there are no spaces to be filled
+        // Kiểm tra còn ô trống hay không
+        if (!boardStatus.OfType<string>().Any(x => x == "") && winner == null)
         {
             return "tie";
         }
@@ -94,22 +101,25 @@ public class GameStatus : MonoBehaviour
         }
     }
 
-    private bool ThreeEqualSymbols(string a, string b, string c) // Checks if there is 3 equal values and no blanks
+    // Kiểm tra nếu 3 biểu tượng không cách nhau bởi khoảng trắng
+    private bool ThreeEqualSymbols(string a, string b, string c)
     {
         return (a == b && b == c) && a != "";
     }
 
-    private void HandelGameEnding(string result) // Handles text to convey game conclution to player
+    // Xử lí thông báo khi kết thúc game
+    private void HandelGameEnding(string result)
     {
         GameEnded = true;
         if (result == "tie")
             gameEndingText.text = "<color=#ffa500ff><b><size=100>YOU TIED</size></b></color>\n<size=50><color=#808080ff>Press R to retry</color></size>";
-        else if (result == "X") // Can be commented out because it's imposible to win
+        else if (result == "X")
             gameEndingText.text = "<color=#008000ff><b><size=100>YOU WIN</size></b></color>\n<size=50><color=#808080ff>Press R to restart</color></size>";
         else
             gameEndingText.text = "<color=#ff0000ff><b><size=100>YOU LOSE</size></b></color>\n<size=50><color=#808080ff>Press R to retry</color></size>";
     }
-    private void RestartGame() // Resets all the values for a fresh game
+
+    private void RestartGame()
     {
         GameEnded = false;
         GameStarted = false;

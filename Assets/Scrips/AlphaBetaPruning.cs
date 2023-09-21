@@ -3,19 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AlphaBetaPruning : MonoBehaviour
 {
     private GameStatus gameStatus;
+    public Text totalCasesText;
     // Start is called before the first frame update
     void Start()
     {
         gameStatus = GameObject.Find("Tic Tac Toe").GetComponent<GameStatus>();
         gameStatus.NextMove += BestMove;
     }
-
+    private int totalCases;
     private void BestMove(string[,] board)
     {
+        totalCases = 0;
         int bestScore = int.MinValue;
         Point bestMove = new Point(-1, -1); // Khởi tạo vị trí di chuyển tốt nhất với giá trị mặc định
 
@@ -38,11 +41,13 @@ public class AlphaBetaPruning : MonoBehaviour
             }
         }
         UpdateBestMoveCell(bestMove);
+        totalCasesText.text = "Total Cases: " + totalCases.ToString();
     }
 
     // recusivley check every possilbe next move and moves after that untill game end
     private int AlphaBeta(string[,] boardStatus, int depth, int alpha, int beta, bool isMaximizing)
     {
+        totalCases++;
         string result = gameStatus.CheckForWinner(boardStatus);
         if (result != null)
         {

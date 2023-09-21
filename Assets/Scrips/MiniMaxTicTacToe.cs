@@ -8,28 +8,17 @@ using UnityEngine.UI;
 public class MiniMaxTicTacToe : MonoBehaviour
 {
     private GameStatus gameStatus;
-    private Button button;
+    public Text totalCasesText;
 
     void Start()
     {
         gameStatus = GameObject.Find("Tic Tac Toe").GetComponent<GameStatus>();
         gameStatus.NextMove += BestMove;
     }
-    public void DisableScript()
-    {
-        // Tắt chức năng của script ở đây
-        enabled = false;
-    }
-
-    public void EnableScript()
-    {
-        // Bật chức năng của script ở đây
-        enabled = true;
-    }
-
-    // Kiểm tra tất cả các ô có thế đi ở bước tiếp theo
+    private int totalCases;
     private void BestMove(string[,] board) 
     {
+        totalCases = 0;
         int bestScore = int.MinValue;
         Point bestMove;
         for (int x = 0; x < 3; x++)
@@ -51,11 +40,13 @@ public class MiniMaxTicTacToe : MonoBehaviour
             }
         }
         UpdateBestMoveCell(bestMove);
+        totalCasesText.text = "Total Cases: " + totalCases.ToString();
     }
 
     // Tính điểm cho bước đi ở ô được gọi
     private int MiniMax(string[,] boardStatus, int depth, bool isMaximizing) 
     {
+        totalCases++;
         string result = gameStatus.CheckForWinner(boardStatus);
         if (result != null)
         {
